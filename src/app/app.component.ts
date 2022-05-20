@@ -12,7 +12,7 @@ import { db, TodoList } from 'src/db/db';
       <input type="text" autocomplete="off" id="list-name" [(ngModel)]="newListName">
     </label>
     <button type="button" (click)="addNewList()">Add</button>
-
+    <button (click)="resetDatabase()">Reset all</button>
 
     <div *ngFor="let todoList of todoLists$ | async; trackBy: identifyList">
       <app-item-list [todoList]="todoList"></app-item-list>
@@ -35,7 +35,9 @@ export class AppComponent {
   }
 
   async resetDatabase() {
-    await db.resetDatabase()
+    if (confirm('Are you sure you want to reset the database?')) {
+      await db.resetDatabase()
+    }
   }
 
   identifyList(index: number, list: TodoList) {
