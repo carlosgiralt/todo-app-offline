@@ -1,24 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { liveQuery } from 'dexie';
-import { db, TodoList } from 'src/db/db';
+import { db, TodoItem, TodoList } from 'src/db/db';
 import { ulid } from 'ulid';
 
 @Component({
   selector: 'app-item-list',
-  template: `
-   <h3>{{ todoList?.title }}</h3>
-
-   <label>
-     Add item:
-     <input type="text" autocomplete="off" [(ngModel)]="newItemName">
-     <button type="button" (click)="addNewItem()">Add</button>
-
-   </label>
-
-   <ul>
-     <li *ngFor="let item of todoItems$ | async">{{ item.title }}</li>
-   </ul>
-  `,
+  templateUrl: './item-list.component.html',
   styles: []
 })
 export class ItemListComponent implements OnInit {
@@ -50,5 +37,18 @@ export class ItemListComponent implements OnInit {
         })
         .finally(() => this.newItemName = "")
     }
+  }
+
+  async markAsDone(item: TodoItem) {
+    await db.todoItems.update(item, { done: !item?.done })
+  }
+
+  async removeItem(item: TodoItem) {
+    if (item?.id) {
+      if (window.confirm(`You will remove "${item.title}". Are yoy sure?`)) {
+        await db.todoItems.delete(item.id)
+      }
+    }
+
   }
 }

@@ -1,0 +1,41 @@
+<h3>{{ todoList?.title }}</h3>
+<label>
+  Add item:
+  <input
+    type="text"
+    autocomplete="off"
+    [(ngModel)]="newItemName">
+  <button
+    type="button"
+    (click)="addNewItem()">
+    Add
+  </button>
+
+</label>
+
+<ul style="list-style: none; padding: 0 1rem;">
+  <li
+    style="cursor: pointer; margin-bottom: .5rem"
+    *ngFor="let item of todoItems$ | async">
+    <span
+      style="margin-right: .5rem"
+      (click)="markAsDone(item)">
+      {{ item?.done ? '☑️' : '⬜' }}
+    </span>
+    <span
+      [ngStyle]="{'text-decoration': item.done ? 'line-through': ''}"
+      (click)="markAsDone(item)">
+      {{ item.title }}
+    </span>
+    <span
+      style="margin-left: .5rem"
+      *ngIf="item?.done">
+      <button
+        style="cursor: pointer"
+        title="Remove"
+        (click)="removeItem(item)">
+        ✖
+      </button>
+    </span>
+  </li>
+</ul>
