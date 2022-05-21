@@ -16,8 +16,7 @@ export class ItemListComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   async listTodoItems() {
     return await db.todoItems
@@ -31,8 +30,8 @@ export class ItemListComponent implements OnInit {
     if (this.todoList?.id) {
       await db.todoItems
         .add({
+          id: ulid(),
           todoListId: this.todoList.id,
-          _id: ulid(),
           title: this.newItemName,
         })
         .finally(() => this.newItemName = "")
@@ -49,6 +48,5 @@ export class ItemListComponent implements OnInit {
         await db.todoItems.delete(item.id)
       }
     }
-
   }
 }

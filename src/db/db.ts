@@ -1,50 +1,45 @@
 import Dexie, { Table } from "dexie";
-import { ulid } from "ulid";
+import { monotonicFactory } from "ulid";
 
-export interface Item {
-  id?: number;
-  _id?: string;
-  name: string;
-}
+const ulid = monotonicFactory()
 
 export interface TodoList {
-  id?: number;
-  _id?: string;
+  id?: string;
   title: string;
+
 }
 
 export interface TodoItem {
-  id?: number;
-  todoListId: number;
-  _id?: string;
+  todoListId: string;
+  id?: string;
   title: string;
   done?: boolean;
 }
 
 export class AppDB extends Dexie {
-  todoItems!: Table<TodoItem, number>;
-  todoLists!: Table<TodoList, number>;
+  todoItems!: Table<TodoItem, string>;
+  todoLists!: Table<TodoList, string>;
 
   constructor() {
     super('todo-app');
-    this.version(3).stores({
-      todoLists: `++id`,
-      todoItems: `++id, todoListId`,
+    this.version(1).stores({
+      todoLists: `id`,
+      todoItems: `id, todoListId`,
     })
     this.on('populate', () => this.populate());
   }
 
   async populate() {
-    const todoListId = await db.todoLists.add({ _id: ulid(), title: "Today" })
+    const todoListId = await db.todoLists.add({ id: ulid(), title: "Today" })
     await db.todoItems.bulkAdd([
       {
+        id: ulid(),
         todoListId,
-        _id: ulid(),
         title: 'Finish ToDo app ofline',
       },
       {
+        id: ulid(),
         todoListId,
-        _id: ulid(),
         title: 'Setup database in another project',
       },
     ])

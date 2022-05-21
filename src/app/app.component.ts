@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { liveQuery } from 'dexie';
 import { db, TodoList } from 'src/db/db';
+import { ulid } from 'ulid';
 @Component({
   selector: 'app-root',
   template: `
@@ -29,6 +30,7 @@ export class AppComponent {
   async addNewList() {
     await db.todoLists
       .add({
+        id: ulid(),
         title: this.newListName
       })
       .finally(() => this.newListName = "")
@@ -41,6 +43,6 @@ export class AppComponent {
   }
 
   identifyList(index: number, list: TodoList) {
-    return `${list._id}${list.title}`
+    return `${list.id}${list.title}`
   }
 }
