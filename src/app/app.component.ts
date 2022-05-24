@@ -4,21 +4,7 @@ import { db, TodoList } from 'src/db/db';
 import { ulid } from 'ulid';
 @Component({
   selector: 'app-root',
-  template: `
-    <!--The content below is only a placeholder and can be replaced.-->
-    <h1>{{title}}</h1>
-
-    <label>
-      New list:
-      <input type="text" autocomplete="off" id="list-name" [(ngModel)]="newListName">
-    </label>
-    <button type="button" (click)="addNewList()">Add</button>
-    <button (click)="resetDatabase()">Reset all</button>
-
-    <div *ngFor="let todoList of todoLists$ | async; trackBy: identifyList">
-      <app-item-list [todoList]="todoList"></app-item-list>
-    </div>
-  `,
+  templateUrl: './app.component.html',
   styles: []
 })
 export class AppComponent {
@@ -34,6 +20,12 @@ export class AppComponent {
         title: this.newListName
       })
       .finally(() => this.newListName = "")
+  }
+
+  async removeList(list: TodoList) {
+    if (list.id) {
+      db.todoLists.delete(list.id)
+    }
   }
 
   async resetDatabase() {

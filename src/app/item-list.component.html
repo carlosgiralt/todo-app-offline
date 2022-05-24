@@ -1,41 +1,46 @@
-<h3>{{ todoList?.title }}</h3>
-<label>
-  Add item:
-  <input
-    type="text"
-    autocomplete="off"
-    [(ngModel)]="newItemName">
-  <button
-    type="button"
-    (click)="addNewItem()">
-    Add
-  </button>
+<div class="flex flex-col gap-2 bg-white shadow-md rounded-md">
+  <div class="flex justify-between items-start border-b border-gray-100 py-2 px-4">
+    <h3 class="font-medium text-xl flex items-center gap-1">
+      {{ todoList?.title }}
+      <span class="px-2 py-1 text-xs font-medium text-white bg-blue-400 rounded-sm" *ngIf="itemsCount">
+        {{ itemsCount }}
+      </span>
+    </h3>
+    <button class="text-gray-300 text-2xl hover:text-gray-400" (click)="removeTodoList()">
+      ✖
+    </button>
+  </div>
 
-</label>
+  <div class="flex flex-col gap-2 px-2 max-h-40 overflow-y-auto">
 
-<ul style="list-style: none; padding: 0 1rem;">
-  <li
-    style="cursor: pointer; margin-bottom: .5rem"
-    *ngFor="let item of todoItems$ | async">
-    <span
-      style="margin-right: .5rem"
-      (click)="markAsDone(item)">
-      {{ item?.done ? '☑️' : '⬜' }}
-    </span>
-    <span
-      [ngStyle]="{'text-decoration': item.done ? 'line-through': ''}"
-      (click)="markAsDone(item)">
-      {{ item.title }}
-    </span>
-    <span
-      style="margin-left: .5rem"
-      *ngIf="item?.done">
-      <button
-        style="cursor: pointer"
-        title="Remove"
-        (click)="removeItem(item)">
-        ✖
-      </button>
-    </span>
-  </li>
-</ul>
+    <div class="item-list flex flex-col gap-2 h-full">
+      <div class="cursor-pointer flex gap-2 items-center text-md px-2 h-6" *ngFor="let item of todoItems$ | async">
+        <input type="checkbox"
+          class="form-tick appearance-none bg-white p-2  border border-gray-300 rounded-sm checked:bg-gray-500 checked:border-transparent focus:outline-none"
+          [checked]="item.done" (click)="markAsDone(item)">
+
+        <div class="text-gray-700 text-md truncate" [ngClass]="{'line-through text-gray-500': item.done}"
+          (click)="markAsDone(item)">
+          {{ item.title }}
+        </div>
+        <div *ngIf="item?.done">
+          <button class="text-red-800 text-2xl" title="Remove" (click)="removeItem(item)">
+            ✖
+          </button>
+        </div>
+      </div>
+
+      <h2 *ngIf="!itemsCount" class="w-full font-medium text-center text-gray-400 text-2xl py-2 border-2 border-dashed">
+        No items yet
+      </h2>
+
+    </div>
+  </div>
+
+  <div class="botder-t border-gray-100 py-2 px-4">
+    <input
+      class="w-full appearance-none rounded-md border border-gray-300 py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-blue-600 focus_border-transparent"
+      type="text" autocomplete="off" placeholder="Add new item" [(ngModel)]="newItemName" (keyup.enter)="addNewItem()">
+  </div>
+
+</div>

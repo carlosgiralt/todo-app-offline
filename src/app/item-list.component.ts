@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { liveQuery } from 'dexie';
 import { db, TodoItem, TodoList } from 'src/db/db';
 import { ulid } from 'ulid';
@@ -10,13 +10,17 @@ import { ulid } from 'ulid';
 })
 export class ItemListComponent implements OnInit {
   @Input() todoList?: TodoList;
+  @Output() OnRemove = new EventEmitter()
 
   todoItems$ = liveQuery(() => this.listTodoItems());
   newItemName = ''
+  itemsCount: number = 0
 
   constructor() { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.todoItems$.subscribe(items => this.itemsCount = items.length)
+  }
 
   async listTodoItems() {
     return await db.todoItems
@@ -44,9 +48,15 @@ export class ItemListComponent implements OnInit {
 
   async removeItem(item: TodoItem) {
     if (item?.id) {
-      if (window.confirm(`You will remove "${item.title}". Are yoy sure?`)) {
+      if (confirm(`You will remove "${item.title}". Are yoy sure?`)) {
         await db.todoItems.delete(item.id)
       }
+    }
+  }
+
+  removeTodoList() {
+    if (confirm(`You will remove "${this.todoList?.title}" list. Are you sure?`)) {
+      this.OnRemove.emit()
     }
   }
 }
